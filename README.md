@@ -62,6 +62,25 @@ python3 -m http.server 8000
 
 Then visit `http://localhost:8000`
 
+## Deployment
+
+### Vercel (Recommended)
+
+The project includes `vercel.json` for simple static hosting.
+
+```bash
+vercel deploy
+```
+
+### GitHub Actions (Automated)
+
+Pushes to `main` automatically deploy to Vercel via `.github/workflows/deploy.yml`.
+
+Required secrets in your GitHub repo:
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
 ## Tech Stack
 
 - Pure HTML/CSS/JavaScript (no build step required)
