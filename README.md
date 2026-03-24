@@ -64,22 +64,24 @@ Then visit `http://localhost:8000`
 
 ## Deployment
 
-### Vercel (Recommended)
-
-The project includes `vercel.json` for simple static hosting.
+### Manual Deploy (Vercel CLI)
 
 ```bash
 vercel deploy
 ```
 
-### GitHub Actions (Automated)
+### Automated Deploy (GitHub Actions)
 
-Pushes to `main` automatically deploy to Vercel via `.github/workflows/deploy.yml`.
+Pushes to `main` automatically deploy to production via `.github/workflows/deploy.yml`.
 
 Required secrets in your GitHub repo:
 - `VERCEL_TOKEN`
 - `VERCEL_ORG_ID`
 - `VERCEL_PROJECT_ID`
+
+To get these secrets:
+1. `VERCEL_TOKEN` — Create at [vercel.com/account/tokens](https://vercel.com/account/tokens)
+2. `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` — Run `vercel inspect <deployment-url>` after your first deploy, or find in project settings
 
 ## Tech Stack
 
