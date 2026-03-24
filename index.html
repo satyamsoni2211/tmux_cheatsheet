@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tmux Cheat Sheet</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Caveat:wght@400;700&family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'JetBrains Mono', monospace;
+background: #0f0f23;
+color: #e0e0e0;
+line-height: 1.6;
+overflow-x: hidden;
+}
+
+.poster-container {
+min-height: 2400px;
+width: 720px;
+margin: 0 auto;
+background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+padding: 40px;
+position: relative;
+}
+
+/* Search Bar Styles */
+.search-container {
+position: fixed;
+top: 20px;
+right: 20px;
+z-index: 1000;
+}
+
+.search-trigger {
+background: rgba(26, 26, 46, 0.95);
+border: 2px solid #00fff7;
+border-radius: 8px;
+padding: 12px 20px;
+color: #e0e0e0;
+font-family: 'JetBrains Mono', monospace;
+font-size: 13px;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 12px;
+transition: all 0.3s ease;
+box-shadow: 0 4px 12px rgba(0, 255, 247, 0.2);
+}
+
+.search-trigger:hover {
+background: rgba(26, 26, 46, 1);
+box-shadow: 0 6px 20px rgba(0, 255, 247, 0.4);
+transform: translateY(-2px);
+}
+
+.search-trigger .material-icons {
+font-size: 20px;
+color: #00fff7;
+}
+
+.search-shortcut {
+background: rgba(0, 255, 247, 0.15);
+padding: 4px 8px;
+border-radius: 4px;
+font-size: 11px;
+color: #00fff7;
+font-weight: 700;
+border: 1px solid rgba(0, 255, 247, 0.3);
+}
+
+/* Search Overlay */
+.search-overlay {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.85);
+backdrop-filter: blur(8px);
+z-index: 9999;
+display: none;
+align-items: flex-start;
+justify-content: center;
+padding-top: 120px;
+animation: fadeIn 0.2s ease;
+}
+
+.search-overlay.active {
+display: flex;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+.search-modal {
+width: 600px;
+max-width: 90%;
+background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+border: 2px solid #00fff7;
+border-radius: 12px;
+box-shadow: 0 20px 60px rgba(0, 255, 247, 0.3);
+overflow: hidden;
+animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+from {
+transform: translateY(-30px);
+opacity: 0;
+}
+to {
+transform: translateY(0);
+opacity: 1;
+}
+}
+
+.search-input-container {
+position: relative;
+border-bottom: 2px solid #3d3d5c;
+}
+
+.search-input-container .material-icons {
+position: absolute;
+left: 20px;
+top: 50%;
+transform: translateY(-50%);
+color: #00fff7;
+font-size: 24px;
+}
+
+.search-input {
+width: 100%;
+background: transparent;
+border: none;
+padding: 24px 20px 24px 60px;
+color: #e0e0e0;
+font-family: 'JetBrains Mono', monospace;
+font-size: 18px;
+outline: none;
+}
+
+.search-input::placeholder {
+color: #666;
+font-size: 16px;
+}
+
+.search-close-hint {
+position: absolute;
+right: 20px;
+top: 50%;
+transform: translateY(-50%);
+color: #666;
+font-size: 12px;
+background: rgba(255, 255, 255, 0.05);
+padding: 4px 8px;
+border-radius: 4px;
+}
+
+.search-results {
+max-height: 450px;
+overflow-y: auto;
+padding: 10px;
+}
+
+.search-results::-webkit-scrollbar {
+width: 8px;
+}
+
+.search-results::-webkit-scrollbar-track {
+background: rgba(255, 255, 255, 0.05);
+}
+
+.search-results::-webkit-scrollbar-thumb {
+background: #00fff7;
+border-radius: 4px;
+}
+
+.search-result-item {
+padding: 14px 16px;
+margin: 4px 0;
+border-radius: 8px;
+cursor: pointer;
+transition: all 0.2s ease;
+border: 1px solid transparent;
+}
+
+.search-result-item:hover,
+.search-result-item.selected {
+background: rgba(0, 255, 247, 0.1);
+border-color: #00fff7;
+}
+
+.search-result-item.selected {
+background: rgba(0, 255, 247, 0.15);
+}
+
+.result-category {
+font-size: 11px;
+color: #8338ec;
+font-weight: 700;
+margin-bottom: 6px;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+
+.result-command {
+font-size: 15px;
+color: #00fff7;
+font-weight: 700;
+margin-bottom: 4px;
+font-family: 'Fira Code', monospace;
+}
+
+.result-desc {
+font-size: 12px;
+color: #a0a0a0;
+line-height: 1.5;
+}
+
+.result-highlight {
+background: rgba(255, 0, 110, 0.3);
+color: #ff006e;
+padding: 0 2px;
+border-radius: 2px;
+}
+
+.search-footer {
+padding: 12px 20px;
+background: rgba(0, 0, 0, 0.3);
+border-top: 1px solid #3d3d5c;
+display: flex;
+gap: 20px;
+justify-content: center;
+}
+
+.search-footer-item {
+display: flex;
+align-items: center;
+gap: 6px;
+font-size: 12px;
+color: #666;
+}
+
+.search-footer-item kbd {
+background: rgba(255, 255, 255, 0.1);
+padding: 2px 6px;
+border-radius: 3px;
+font-size: 11px;
+border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.no-results {
+text-align: center;
+padding: 40px 20px;
+color: #666;
+font-size: 14px;
+}
+
+.no-results .material-icons {
+font-size: 48px;
+color: #3d3d5c;
+margin-bottom: 16px;
+}
+
+/* Hand-drawn border effect */
+.sketchy-border {
+position: relative;
+border: 3px solid #00fff7;
+border-radius: 2px;
+background: rgba(26, 26, 46, 0.8);
+}
+
+.sketchy-border::before {
+content: '';
+position: absolute;
+top: -2px;
+left: -2px;
+right: -2px;
+bottom: -2px;
+border: 3px solid #00fff7;
+border-radius: 2px;
+opacity: 0.3;
+transform: rotate(-0.5deg);
+pointer-events: none;
+}
+
+/* Title Section */
+.header {
+text-align: center;
+margin-bottom: 30px;
+padding: 30px;
+background: rgba(0, 255, 247, 0.05);
+border: 2px dashed #00fff7;
+position: relative;
+}
+
+.header::before {
+content: '';
+position: absolute;
+top: -4px;
+left: -4px;
+right: -4px;
+bottom: -4px;
+border: 2px dashed #00fff7;
+opacity: 0.3;
+transform: rotate(1deg);
+}
+
+.title {
+font-size: 56px;
+font-weight: 700;
+color: #00fff7;
+text-shadow: 2px 2px 0 #ff006e, 4px 4px 0 #8338ec;
+letter-spacing: 4px;
+font-family: 'Fira Code', monospace;
+margin-bottom: 10px;
+}
+
+.subtitle {
+font-size: 20px;
+color: #8338ec;
+font-family: 'Caveat', cursive;
+font-weight: 700;
+}
+
+/* Section Headers */
+.section-header {
+font-size: 28px;
+font-weight: 700;
+color: #ff006e;
+margin: 30px 0 15px 0;
+padding: 10px 20px;
+background: linear-gradient(90deg, rgba(255, 0, 110, 0.1), transparent);
+border-left: 5px solid #ff006e;
+font-family: 'Caveat', cursive;
+position: relative;
+}
+
+.section-header::before {
+content: '✦';
+margin-right: 10px;
+font-size: 20px;
+}
+
+/* Cards */
+.card {
+background: rgba(26, 26, 46, 0.9);
+border: 2px solid #3d3d5c;
+border-radius: 8px;
+padding: 20px;
+margin-bottom: 15px;
+position: relative;
+overflow: hidden;
+}
+
+.card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 3px;
+background: linear-gradient(90deg, #00fff7, #ff006e, #8338ec);
+}
+
+/* Command Grid */
+.command-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+margin-top: 10px;
+}
+
+.command-item {
+background: rgba(131, 56, 236, 0.1);
+border: 1px solid #8338ec;
+border-radius: 4px;
+padding: 12px;
+transition: all 0.3s ease;
+}
+
+.command-item:hover {
+background: rgba(131, 56, 236, 0.2);
+transform: translateX(5px);
+}
+
+.cmd-key {
+font-size: 13px;
+color: #00fff7;
+font-weight: 700;
+display: block;
+margin-bottom: 5px;
+font-family: 'JetBrains Mono', monospace;
+}
+
+.cmd-desc {
+font-size: 11px;
+color: #a0a0a0;
+line-height: 1.4;
+}
+
+/* Flags Section */
+.flag-item {
+display: flex;
+align-items: center;
+margin: 10px 0;
+padding: 8px;
+background: rgba(0, 255, 247, 0.05);
+border-left: 3px solid #00fff7;
+}
+
+.flag-key {
+color: #ff006e;
+font-weight: 700;
+min-width: 120px;
+font-size: 12px;
+}
+
+.flag-desc {
+color: #a0a0a0;
+font-size: 11px;
+}
+
+/* Config Tips */
+.config-tip {
+background: rgba(255, 0, 110, 0.08);
+border: 1px dashed #ff006e;
+border-radius: 6px;
+padding: 15px;
+margin: 10px 0;
+position: relative;
+}
+
+.config-tip::before {
+content: '💡';
+position: absolute;
+top: -12px;
+left: 15px;
+background: #0f0f23;
+padding: 0 8px;
+font-size: 20px;
+}
+
+.config-code {
+background: #0a0a1a;
+color: #00ff87;
+padding: 12px;
+border-radius: 4px;
+font-size: 11px;
+margin-top: 10px;
+border: 1px solid #333;
+font-family: 'Fira Code', monospace;
+line-height: 1.8;
+white-space: pre-wrap;
+word-wrap: break-word;
+}
+
+/* Hacks Section */
+.hack-card {
+background: linear-gradient(135deg, rgba(131, 56, 236, 0.15), rgba(0, 255, 247, 0.1));
+border: 2px solid #8338ec;
+border-radius: 8px;
+padding: 18px;
+margin: 12px 0;
+position: relative;
+}
+
+.hack-title {
+color: #00fff7;
+font-size: 16px;
+font-weight: 700;
+margin-bottom: 10px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.hack-title .material-icons {
+color: #ff006e;
+font-size: 20px;
+}
+
+/* Layout Icons */
+.layout-grid {
+display: grid;
+grid-template-columns: repeat(5, 1fr);
+gap: 8px;
+margin: 15px 0;
+}
+
+.layout-item {
+text-align: center;
+padding: 12px 8px;
+background: rgba(0, 255, 247, 0.08);
+border: 2px solid #3d3d5c;
+border-radius: 6px;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.layout-item:hover {
+background: rgba(0, 255, 247, 0.15);
+border-color: #00fff7;
+transform: translateY(-2px);
+}
+
+.layout-icon {
+font-size: 24px;
+color: #ff006e;
+margin-bottom: 5px;
+}
+
+.layout-name {
+font-size: 10px;
+color: #00fff7;
+font-weight: 600;
+}
+
+/* Keyboard Illustration */
+.keyboard-illust {
+text-align: center;
+margin: 20px 0;
+padding: 20px;
+border: 2px dashed #3d3d5c;
+border-radius: 8px;
+background: rgba(131, 56, 236, 0.05);
+}
+
+.kb-key {
+display: inline-block;
+background: #1a1a2e;
+border: 2px solid #00fff7;
+border-radius: 4px;
+padding: 8px 12px;
+margin: 3px;
+color: #00fff7;
+font-size: 12px;
+font-weight: 700;
+box-shadow: 2px 2px 0 #8338ec;
+position: relative;
+}
+
+.kb-key::before {
+content: '';
+position: absolute;
+top: -1px;
+left: -1px;
+right: -1px;
+bottom: -1px;
+border: 1px solid #00fff7;
+opacity: 0.3;
+border-radius: 4px;
+}
+
+/* Decorative Elements */
+.doodle {
+position: absolute;
+opacity: 0.1;
+font-size: 60px;
+color: #8338ec;
+z-index: 0;
+}
+
+.doodle-1 { top: 100px; right: 20px; transform: rotate(15deg); }
+.doodle-2 { top: 600px; left: -20px; transform: rotate(-20deg); }
+.doodle-3 { bottom: 200px; right: -10px; transform: rotate(25deg); }
+
+/* Shortcut Highlight */
+.shortcut {
+color: #00ff87;
+font-weight: 700;
+background: rgba(0, 255, 135, 0.1);
+padding: 2px 6px;
+border-radius: 3px;
+font-size: 11px;
+}
+
+/* Footer */
+.footer {
+text-align: center;
+margin-top: 40px;
+padding: 20px;
+border-top: 2px dashed #3d3d5c;
+color: #666;
+font-size: 12px;
+font-family: 'Caveat', cursive;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+.command-grid {
+grid-template-columns: 1fr;
+}
+
+.search-container {
+top: 10px;
+right: 10px;
+}
+
+.search-trigger {
+padding: 8px 14px;
+font-size: 12px;
+}
+
+.search-modal {
+margin: 0 10px;
+width: calc(100% - 20px);
+}
+}
+</style>
+</head>
+<body>
+<!-- Search Trigger Button -->
+<div class="search-container">
+<button class="search-trigger" onclick="openSearch()">
+<i class="material-icons">search</i>
+<span>Search</span>
+<span class="search-shortcut">Ctrl+K</span>
+</button>
+</div>
+
+<!-- Search Overlay Modal -->
+<div class="search-overlay" id="searchOverlay" onclick="closeSearchOnOverlay(event)">
+<div class="search-modal" onclick="event.stopPropagation()">
+<div class="search-input-container">
+<i class="material-icons">search</i>
+<input type="text" class="search-input" id="searchInput" placeholder="Search commands, tips, configurations..." autocomplete="off" oninput="handleSearch(this.value)">
+<span class="search-close-hint">ESC</span>
+</div>
+<div class="search-results" id="searchResults">
+<!-- Results will be populated here -->
+</div>
+<div class="search-footer">
+<div class="search-footer-item">
+<kbd>↑↓</kbd> Navigate
+</div>
+<div class="search-footer-item">
+<kbd>Enter</kbd> Select
+</div>
+<div class="search-footer-item">
+<kbd>ESC</kbd> Close
+</div>
+</div>
+</div>
+</div>
+
+<div class="poster-container">
+<!-- Decorative Doodles -->
+<div class="doodle doodle-1">⌨️</div>
+<div class="doodle doodle-2">💻</div>
+<div class="doodle doodle-3">🖥️</div>
+
+<!-- Header -->
+<div class="header">
+<h1 class="title">tmux</h1>
+<p class="subtitle">Terminal Multiplexer Cheat Sheet</p>
+</div>
+
+<!-- Prefix Key Info -->
+<div class="keyboard-illust">
+<div class="kb-key">Ctrl</div>
+<div class="kb-key">+</div>
+<div class="kb-key">b</div>
+<span style="color: #ff006e; font-size: 14px; font-family: 'Caveat', cursive; font-weight: 700;"> ← Default Prefix (Press these keys first)</span>
+</div>
+
+<!-- Section 1: Session Management -->
+<div class="section-header">Session Management</div>
+<div class="card">
+<div class="command-grid">
+<div class="command-item">
+<span class="cmd-key">tmux new -s [name]</span>
+<span class="cmd-desc">Create new session with name</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">tmux ls</span>
+<span class="cmd-desc">List all sessions</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">tmux a -t [name]</span>
+<span class="cmd-desc">Attach to session</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b d</span>
+<span class="cmd-desc">Detach from session</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b $</span>
+<span class="cmd-desc">Rename session</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">tmux kill-ses -t [name]</span>
+<span class="cmd-desc">Kill session by name</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b s</span>
+<span class="cmd-desc">Show all sessions</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b ( )</span>
+<span class="cmd-desc">Previous / Next session</span>
+</div>
+</div>
+
+<div class="flag-item">
+<span class="flag-key">-A</span>
+<span class="flag-desc">Attach or create new session if it doesn't exist</span>
+</div>
+<div class="flag-item">
+<span class="flag-key">-d</span>
+<span class="flag-desc">Detach other clients from session</span>
+</div>
+</div>
+
+<!-- Section 2: Window Management -->
+<div class="section-header">Window Management</div>
+<div class="card">
+<div class="command-grid">
+<div class="command-item">
+<span class="cmd-key">Ctrl+b c</span>
+<span class="cmd-desc">Create new window</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b ,</span>
+<span class="cmd-desc">Rename current window</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b n</span>
+<span class="cmd-desc">Next window</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b p</span>
+<span class="cmd-desc">Previous window</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b 0-9</span>
+<span class="cmd-desc">Switch to window by number</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b w</span>
+<span class="cmd-desc">List windows interactively</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b &</span>
+<span class="cmd-desc">Close current window</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b l</span>
+<span class="cmd-desc">Toggle last active window</span>
+</div>
+</div>
+
+<div class="config-tip">
+<strong style="color: #ff006e;">Move Window:</strong>
+<div class="config-code">:move-window -t [target_session]:[position]</div>
+</div>
+</div>
+
+<!-- Section 3: Pane Management -->
+<div class="section-header">Pane Management</div>
+<div class="card">
+<div class="command-grid">
+<div class="command-item">
+<span class="cmd-key">Ctrl+b %</span>
+<span class="cmd-desc">Split pane vertically (|)</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b "</span>
+<span class="cmd-desc">Split pane horizontally (-)</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b ←↑↓→</span>
+<span class="cmd-desc">Navigate to pane in direction</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b o</span>
+<span class="cmd-desc">Switch to next pane</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b q</span>
+<span class="cmd-desc">Show pane numbers</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b z</span>
+<span class="cmd-desc">Toggle pane zoom (fullscreen)</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b x</span>
+<span class="cmd-desc">Close current pane</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b { }</span>
+<span class="cmd-desc">Move pane left / right</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b !</span>
+<span class="cmd-desc">Convert pane to window</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b Space</span>
+<span class="cmd-desc">Toggle between layouts</span>
+</div>
+</div>
+
+<!-- Resize Pane -->
+<div style="margin-top: 20px; padding: 15px; background: rgba(255, 0, 110, 0.05); border-radius: 6px;">
+<div style="color: #ff006e; font-weight: 700; margin-bottom: 10px;">Resize Pane:</div>
+<div class="command-grid">
+<div class="command-item">
+<span class="cmd-key">Ctrl+b Alt+←↑↓→</span>
+<span class="cmd-desc">Resize pane in direction</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b :resize-pane -[DULR]</span>
+<span class="cmd-desc">Resize by specific amount</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Section 4: Important Flags -->
+<div class="section-header">Important Flags & Options</div>
+<div class="card">
+<div class="flag-item">
+<span class="flag-key">-h / -v</span>
+<span class="flag-desc">Split window horizontally / vertically</span>
+</div>
+<div class="flag-item">
+<span class="flag-key">-c [path]</span>
+<span class="flag-desc">Set working directory for new pane/window</span>
+</div>
+<div class="flag-item">
+<span class="flag-key">-t [target]</span>
+<span class="flag-desc">Specify target session/window/pane</span>
+</div>
+<div class="flag-item">
+<span class="flag-key">-s [source]</span>
+<span class="flag-desc">Specify source for operations</span>
+</div>
+<div class="flag-item">
+<span class="flag-key">-n [name]</span>
+<span class="flag-desc">Set name for new window/session</span>
+</div>
+<div class="flag-item">
+<span class="flag-key">-r</span>
+<span class="flag-desc">Renumber windows (remove gaps)</span>
+</div>
+<div class="flag-item">
+<span class="flag-key">-E</span>
+<span class="flag-desc">Spread panes evenly in layout</span>
+</div>
+
+<div class="config-tip">
+<strong style="color: #ff006e;">Join Panes:</strong>
+<div class="config-code">:join-pane -s 2 -t 1  # Join window 2 to window 1</div>
+</div>
+</div>
+
+<!-- Section 5: Copy Mode -->
+<div class="section-header">Copy Mode (Vi-Style)</div>
+<div class="card">
+<div style="text-align: center; margin-bottom: 15px;">
+<span class="cmd-key">Ctrl+b [</span> → Enter Copy Mode &nbsp;&nbsp;|&nbsp;&nbsp; <span class="cmd-key">q</span> → Quit
+</div>
+
+<div class="command-grid">
+<div class="command-item">
+<span class="cmd-key">h j k l</span>
+<span class="cmd-desc">Move cursor (vim-style)</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">w / b</span>
+<span class="cmd-desc">Forward / backward one word</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">0 / $</span>
+<span class="cmd-desc">Start / end of line</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">g / G</span>
+<span class="cmd-desc">Top / bottom of buffer</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+d / Ctrl+u</span>
+<span class="cmd-desc">Half page down / up</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">/ / ?</span>
+<span class="cmd-desc">Search forward / backward</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">n / N</span>
+<span class="cmd-desc">Next / previous search result</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Space</span>
+<span class="cmd-desc">Start selection</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Enter / y</span>
+<span class="cmd-desc">Copy selection</span>
+</div>
+<div class="command-item">
+<span class="cmd-key">Ctrl+b ]</span>
+<span class="cmd-desc">Paste from buffer</span>
+</div>
+</div>
+
+<div class="config-tip">
+<strong style="color: #ff006e;">Enable Vi Mode in Config:</strong>
+<div class="config-code">setw -g mode-keys vi</div>
+</div>
+</div>
+
+<!-- Section 6: Configuration Tips -->
+<div class="section-header">Configuration File Tips (~/.tmux.conf)</div>
+
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">keyboard</i>
+Change Prefix Key to Ctrl+a
+</div>
+<div class="config-code">unbind C-b
+set -g prefix C-a
+bind C-a send-prefix</div>
+</div>
+
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">mouse</i>
+Enable Mouse Support
+</div>
+<div class="config-code">set -g mouse on  # Click panes, resize, scroll</div>
+</div>
+
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">settings</i>
+Essential Settings
+</div>
+<div class="config-code">set -g base-index 1  # Windows start at 1
+setw -g pane-base-index 1  # Panes start at 1
+set -g renumber-windows on  # Auto-renumber windows
+set -g history-limit 50000  # Increase history
+set -g display-time 2000  # Longer status messages
+set-option -g allow-rename off  # Prevent auto-rename</div>
+</div>
+
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">speed</i>
+Intuitive Pane Splits
+</div>
+<div class="config-code">bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+unbind '"'
+unbind %</div>
+</div>
+
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">refresh</i>
+Quick Config Reload
+</div>
+<div class="config-code">bind r source-file ~/.tmux.conf \; display "Config Reloaded!"</div>
+</div>
+
+<!-- Section 7: Developer Hacks -->
+<div class="section-header">Developer Hacks & Productivity</div>
+
+<!-- Pane Layouts -->
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">view_quilt</i>
+Built-in Pane Layouts
+</div>
+<div style="color: #a0a0a0; font-size: 12px; margin: 10px 0;">Press <span class="shortcut">Ctrl+b Space</span> to cycle through layouts:</div>
+<div class="layout-grid">
+<div class="layout-item">
+<div class="layout-icon">▤</div>
+<div class="layout-name">even-h</div>
+</div>
+<div class="layout-item">
+<div class="layout-icon">▥</div>
+<div class="layout-name">even-v</div>
+</div>
+<div class="layout-item">
+<div class="layout-icon">▦</div>
+<div class="layout-name">main-h</div>
+</div>
+<div class="layout-item">
+<div class="layout-icon">▧</div>
+<div class="layout-name">main-v</div>
+</div>
+<div class="layout-item">
+<div class="layout-icon">◫</div>
+<div class="layout-name">tiled</div>
+</div>
+</div>
+</div>
+
+<!-- Vim-Style Navigation -->
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">navigation</i>
+Vim-Style Pane Navigation
+</div>
+<div class="config-code"># Navigate panes with h,j,k,l
+bind -r h select-pane -L
+bind -r j select-pane -D
+bind -r k select-pane -U
+bind -r l select-pane -R
+
+# Resize panes with H,J,K,L
+bind -r H resize-pane -L 2
+bind -r J resize-pane -D 2
+bind -r K resize-pane -U 2
+bind -r L resize-pane -R 2</div>
+</div>
+
+<!-- Sync Panes -->
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">sync</i>
+Sync Panes (Type in All Panes)
+</div>
+<div class="config-code">:setw synchronize-panes on  # Enable sync
+:setw synchronize-panes off  # Disable sync</div>
+<div style="color: #a0a0a0; font-size: 12px; margin-top: 10px;">💡 Great for running same command across multiple servers</div>
+</div>
+
+<!-- Save & Restore Layouts -->
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">save</i>
+Save &amp; Restore Custom Layouts
+</div>
+<div class="config-code"># Save current layout
+:select-layout -E  # Spread evenly first
+:run-shell "tmux list-windows -F '#{window_layout}' > ~/.tmux-layout"
+
+# Restore saved layout
+:run-shell "tmux select-layout \"$(cat ~/.tmux-layout)\""</div>
+</div>
+
+<!-- Custom Layout Shortcuts -->
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">dashboard</i>
+Custom Layout Shortcuts
+</div>
+<div class="config-code"># Add to ~/.tmux.conf
+bind-key H select-layout even-horizontal
+bind-key V select-layout even-vertical
+bind-key P select-layout main-vertical \; resize-pane -t 0 -x 120</div>
+<div style="color: #a0a0a0; font-size: 12px; margin-top: 10px;">
+<span class="shortcut">Ctrl+b H</span> Horizontal layout &nbsp;
+<span class="shortcut">Ctrl+b V</span> Vertical layout &nbsp;
+<span class="shortcut">Ctrl+b P</span> Programming layout
+</div>
+</div>
+
+<!-- Alt-Arrow Navigation -->
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">keyboard_arrow_right</i>
+Alt-Arrow Pane Navigation (No Prefix)
+</div>
+<div class="config-code"># Switch panes using Alt-arrow without prefix
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D</div>
+</div>
+
+<!-- Clipboard Integration -->
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">content_copy</i>
+System Clipboard Integration (Linux)
+</div>
+<div class="config-code"># Copy to system clipboard: Alt+c
+bind M-c run "tmux save-buffer - | xclip -i -sel clipboard"
+
+# Paste from system clipboard: Alt+v
+bind M-v run "tmux set-buffer \"$(xclip -o -sel clipboard)\"; tmux paste-buffer"</div>
+</div>
+
+<!-- Status Bar Customization -->
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">tune</i>
+Status Bar Customization
+</div>
+<div class="config-code">set -g status-position bottom
+set -g status-justify left
+set -g status-style 'fg=cyan bg=black'
+set -g status-left ''
+set -g status-right '%Y-%m-%d %H:%M '
+set -g status-right-length 50
+setw -g window-status-current-style 'fg=black bg=cyan'</div>
+</div>
+
+<!-- Session Persistence -->
+<div class="hack-card">
+<div class="hack-title">
+<i class="material-icons">restore</i>
+Session Persistence with tmux-resurrect
+</div>
+<div style="color: #a0a0a0; font-size: 13px; margin-bottom: 10px;">
+Install <span style="color: #00fff7; font-weight: 700;">tmux-resurrect</span> plugin to save and restore sessions:
+</div>
+<div class="config-code"># Save: Ctrl+b Ctrl+s
+# Restore: Ctrl+b Ctrl+r
+
+# Install via TPM (Tmux Plugin Manager)
+set -g @plugin 'tmux-plugins/tmux-resurrect'</div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+<p>✨ Made with ❤️ for developers who love terminal efficiency ✨</p>
+<p style="margin-top: 10px; font-size: 14px; color: #8338ec;">Press <span style="color: #00fff7;">Ctrl+b ?</span> for all key bindings • <span style="color: #00fff7;">Ctrl+K</span> to search • <span style="color: #00fff7;">man tmux</span> for complete documentation</p>
+</div>
+</div>
+
+<script>
+// Search Data Index
+const searchData = [
+// Session Management
+{ category: 'Session', command: 'tmux new -s [name]', desc: 'Create new session with name', keywords: ['new', 'create', 'session', 'start'] },
+{ category: 'Session', command: 'tmux ls', desc: 'List all sessions', keywords: ['list', 'show', 'sessions', 'ls'] },
+{ category: 'Session', command: 'tmux a -t [name]', desc: 'Attach to session', keywords: ['attach', 'connect', 'session', 'a', 'at'] },
+{ category: 'Session', command: 'Ctrl+b d', desc: 'Detach from session', keywords: ['detach', 'disconnect', 'session', 'leave'] },
+{ category: 'Session', command: 'Ctrl+b $', desc: 'Rename session', keywords: ['rename', 'session', 'name', 'change'] },
+{ category: 'Session', command: 'tmux kill-ses -t [name]', desc: 'Kill session by name', keywords: ['kill', 'delete', 'remove', 'session', 'close'] },
+{ category: 'Session', command: 'Ctrl+b s', desc: 'Show all sessions', keywords: ['show', 'list', 'sessions', 'display'] },
+{ category: 'Session', command: 'Ctrl+b ( )', desc: 'Previous / Next session', keywords: ['previous', 'next', 'switch', 'navigate', 'session'] },
+
+// Flags
+{ category: 'Flag', command: '-A', desc: 'Attach or create new session if it doesn\'t exist', keywords: ['attach', 'create', 'session', 'flag', 'option'] },
+{ category: 'Flag', command: '-d', desc: 'Detach other clients from session', keywords: ['detach', 'clients', 'flag', 'option'] },
+
+// Window Management
+{ category: 'Window', command: 'Ctrl+b c', desc: 'Create new window', keywords: ['create', 'new', 'window', 'tab'] },
+{ category: 'Window', command: 'Ctrl+b ,', desc: 'Rename current window', keywords: ['rename', 'window', 'name', 'change'] },
+{ category: 'Window', command: 'Ctrl+b n', desc: 'Next window', keywords: ['next', 'window', 'switch', 'navigate'] },
+{ category: 'Window', command: 'Ctrl+b p', desc: 'Previous window', keywords: ['previous', 'window', 'switch', 'navigate'] },
+{ category: 'Window', command: 'Ctrl+b 0-9', desc: 'Switch to window by number', keywords: ['switch', 'window', 'number', 'select'] },
+{ category: 'Window', command: 'Ctrl+b w', desc: 'List windows interactively', keywords: ['list', 'windows', 'show', 'interactive'] },
+{ category: 'Window', command: 'Ctrl+b &', desc: 'Close current window', keywords: ['close', 'kill', 'window', 'delete'] },
+{ category: 'Window', command: 'Ctrl+b l', desc: 'Toggle last active window', keywords: ['toggle', 'last', 'window', 'switch'] },
+{ category: 'Window', command: ':move-window -t [target]', desc: 'Move window to target position', keywords: ['move', 'window', 'reorder', 'position'] },
+
+// Pane Management
+{ category: 'Pane', command: 'Ctrl+b %', desc: 'Split pane vertically (|)', keywords: ['split', 'pane', 'vertical', 'divide'] },
+{ category: 'Pane', command: 'Ctrl+b "', desc: 'Split pane horizontally (-)', keywords: ['split', 'pane', 'horizontal', 'divide'] },
+{ category: 'Pane', command: 'Ctrl+b ←↑↓→', desc: 'Navigate to pane in direction', keywords: ['navigate', 'pane', 'switch', 'arrow', 'direction'] },
+{ category: 'Pane', command: 'Ctrl+b o', desc: 'Switch to next pane', keywords: ['switch', 'next', 'pane', 'cycle'] },
+{ category: 'Pane', command: 'Ctrl+b q', desc: 'Show pane numbers', keywords: ['show', 'pane', 'numbers', 'display'] },
+{ category: 'Pane', command: 'Ctrl+b z', desc: 'Toggle pane zoom (fullscreen)', keywords: ['zoom', 'fullscreen', 'pane', 'maximize', 'toggle'] },
+{ category: 'Pane', command: 'Ctrl+b x', desc: 'Close current pane', keywords: ['close', 'kill', 'pane', 'delete'] },
+{ category: 'Pane', command: 'Ctrl+b { }', desc: 'Move pane left / right', keywords: ['move', 'pane', 'swap', 'reorder'] },
+{ category: 'Pane', command: 'Ctrl+b !', desc: 'Convert pane to window', keywords: ['convert', 'pane', 'window', 'break'] },
+{ category: 'Pane', command: 'Ctrl+b Space', desc: 'Toggle between layouts', keywords: ['toggle', 'layout', 'pane', 'arrangement'] },
+{ category: 'Pane', command: 'Ctrl+b Alt+←↑↓→', desc: 'Resize pane in direction', keywords: ['resize', 'pane', 'size', 'adjust'] },
+{ category: 'Pane', command: ':resize-pane -[DULR]', desc: 'Resize by specific amount', keywords: ['resize', 'pane', 'command', 'size'] },
+
+// Important Flags
+{ category: 'Flag', command: '-h / -v', desc: 'Split window horizontally / vertically', keywords: ['split', 'horizontal', 'vertical', 'flag'] },
+{ category: 'Flag', command: '-c [path]', desc: 'Set working directory for new pane/window', keywords: ['directory', 'path', 'working', 'flag'] },
+{ category: 'Flag', command: '-t [target]', desc: 'Specify target session/window/pane', keywords: ['target', 'specify', 'flag', 'option'] },
+{ category: 'Flag', command: '-s [source]', desc: 'Specify source for operations', keywords: ['source', 'specify', 'flag', 'option'] },
+{ category: 'Flag', command: '-n [name]', desc: 'Set name for new window/session', keywords: ['name', 'window', 'session', 'flag'] },
+{ category: 'Flag', command: '-r', desc: 'Renumber windows (remove gaps)', keywords: ['renumber', 'windows', 'gaps', 'flag'] },
+{ category: 'Flag', command: '-E', desc: 'Spread panes evenly in layout', keywords: ['spread', 'evenly', 'layout', 'flag'] },
+{ category: 'Pane', command: ':join-pane -s 2 -t 1', desc: 'Join window 2 to window 1', keywords: ['join', 'merge', 'pane', 'window'] },
+
+// Copy Mode
+{ category: 'Copy Mode', command: 'Ctrl+b [', desc: 'Enter Copy Mode', keywords: ['copy', 'mode', 'enter', 'start'] },
+{ category: 'Copy Mode', command: 'q', desc: 'Quit copy mode', keywords: ['quit', 'exit', 'copy', 'mode'] },
+{ category: 'Copy Mode', command: 'h j k l', desc: 'Move cursor (vim-style)', keywords: ['move', 'cursor', 'vim', 'navigate'] },
+{ category: 'Copy Mode', command: 'w / b', desc: 'Forward / backward one word', keywords: ['word', 'forward', 'backward', 'navigate'] },
+{ category: 'Copy Mode', command: '0 / $', desc: 'Start / end of line', keywords: ['start', 'end', 'line', 'beginning'] },
+{ category: 'Copy Mode', command: 'g / G', desc: 'Top / bottom of buffer', keywords: ['top', 'bottom', 'buffer', 'jump'] },
+{ category: 'Copy Mode', command: 'Ctrl+d / Ctrl+u', desc: 'Half page down / up', keywords: ['page', 'scroll', 'half', 'up', 'down'] },
+{ category: 'Copy Mode', command: '/ / ?', desc: 'Search forward / backward', keywords: ['search', 'find', 'forward', 'backward'] },
+{ category: 'Copy Mode', command: 'n / N', desc: 'Next / previous search result', keywords: ['next', 'previous', 'search', 'result'] },
+{ category: 'Copy Mode', command: 'Space', desc: 'Start selection', keywords: ['selection', 'start', 'begin', 'select'] },
+{ category: 'Copy Mode', command: 'Enter / y', desc: 'Copy selection', keywords: ['copy', 'yank', 'selection', 'save'] },
+{ category: 'Copy Mode', command: 'Ctrl+b ]', desc: 'Paste from buffer', keywords: ['paste', 'buffer', 'insert'] },
+{ category: 'Config', command: 'setw -g mode-keys vi', desc: 'Enable Vi Mode in Copy Mode', keywords: ['vi', 'mode', 'vim', 'keys', 'enable'] },
+
+// Configuration Tips
+{ category: 'Config', command: 'Change Prefix Key', desc: 'Change prefix from Ctrl+b to Ctrl+a for easier access', keywords: ['prefix', 'change', 'ctrl', 'key', 'remap', 'ctrl+a'] },
+{ category: 'Config', command: 'set -g mouse on', desc: 'Enable mouse support for clicking panes and scrolling', keywords: ['mouse', 'click', 'scroll', 'enable', 'support'] },
+{ category: 'Config', command: 'set -g base-index 1', desc: 'Windows start at 1 instead of 0', keywords: ['base', 'index', 'windows', 'start', 'numbering'] },
+{ category: 'Config', command: 'setw -g pane-base-index 1', desc: 'Panes start at 1 instead of 0', keywords: ['pane', 'base', 'index', 'start', 'numbering'] },
+{ category: 'Config', command: 'set -g renumber-windows on', desc: 'Auto-renumber windows when one is closed', keywords: ['renumber', 'windows', 'auto', 'gaps'] },
+{ category: 'Config', command: 'set -g history-limit 50000', desc: 'Increase scrollback history limit', keywords: ['history', 'limit', 'scroll', 'buffer', 'lines'] },
+{ category: 'Config', command: 'set -g display-time 2000', desc: 'Longer status message display time', keywords: ['display', 'time', 'message', 'status', 'duration'] },
+{ category: 'Config', command: 'set-option -g allow-rename off', desc: 'Prevent automatic window renaming', keywords: ['rename', 'auto', 'prevent', 'window', 'name'] },
+{ category: 'Config', command: 'Intuitive Pane Splits', desc: 'Use | and - for vertical/horizontal splits instead of % and "', keywords: ['split', 'intuitive', 'pane', 'vertical', 'horizontal', 'bind'] },
+{ category: 'Config', command: 'Quick Config Reload', desc: 'Reload tmux config with Ctrl+b r', keywords: ['reload', 'config', 'refresh', 'update', 'apply'] },
+
+// Developer Hacks
+{ category: 'Layouts', command: 'even-horizontal', desc: 'All panes side by side with equal width', keywords: ['layout', 'horizontal', 'even', 'side', 'width'] },
+{ category: 'Layouts', command: 'even-vertical', desc: 'All panes stacked with equal height', keywords: ['layout', 'vertical', 'even', 'stacked', 'height'] },
+{ category: 'Layouts', command: 'main-horizontal', desc: 'One large pane on top, smaller panes below', keywords: ['layout', 'main', 'horizontal', 'top', 'large'] },
+{ category: 'Layouts', command: 'main-vertical', desc: 'One large pane on left, smaller panes on right', keywords: ['layout', 'main', 'vertical', 'left', 'large'] },
+{ category: 'Layouts', command: 'tiled', desc: 'All panes arranged efficiently with equal size', keywords: ['layout', 'tiled', 'grid', 'efficient', 'equal'] },
+{ category: 'Hack', command: 'Vim-Style Navigation', desc: 'Navigate panes with h, j, k, l keys', keywords: ['vim', 'navigate', 'pane', 'hjkl', 'movement'] },
+{ category: 'Hack', command: 'Vim-Style Resize', desc: 'Resize panes with H, J, K, L keys', keywords: ['vim', 'resize', 'pane', 'HJKL', 'size'] },
+{ category: 'Hack', command: 'Sync Panes', desc: 'Type commands in all panes simultaneously', keywords: ['sync', 'panes', 'simultaneous', 'parallel', 'broadcast'] },
+{ category: 'Hack', command: 'Save Layout', desc: 'Save current pane layout to file', keywords: ['save', 'layout', 'restore', 'preserve', 'store'] },
+{ category: 'Hack', command: 'Restore Layout', desc: 'Restore saved pane layout', keywords: ['restore', 'layout', 'load', 'recover'] },
+{ category: 'Hack', command: 'Alt-Arrow Navigation', desc: 'Switch panes with Alt+arrow without prefix', keywords: ['alt', 'arrow', 'navigate', 'pane', 'switch', 'prefix'] },
+{ category: 'Hack', command: 'System Clipboard', desc: 'Copy/paste to system clipboard with Alt+c/Alt+v', keywords: ['clipboard', 'system', 'copy', 'paste', 'xclip'] },
+{ category: 'Hack', command: 'Status Bar Customization', desc: 'Customize status bar colors, position, and content', keywords: ['status', 'bar', 'customize', 'colors', 'position'] },
+{ category: 'Plugin', command: 'tmux-resurrect', desc: 'Save and restore tmux sessions across restarts', keywords: ['resurrect', 'save', 'restore', 'session', 'persistence', 'plugin'] },
+{ category: 'Plugin', command: 'TPM', desc: 'Tmux Plugin Manager for managing plugins', keywords: ['tpm', 'plugin', 'manager', 'install', 'manage'] },
+];
+
+let selectedResultIndex = -1;
+let searchResults = [];
+
+// Open search overlay
+function openSearch() {
+const overlay = document.getElementById('searchOverlay');
+const input = document.getElementById('searchInput');
+overlay.classList.add('active');
+input.value = '';
+input.focus();
+searchResults = [];
+selectedResultIndex = -1;
+document.getElementById('searchResults').innerHTML = '<div class="no-results"><i class="material-icons">search</i><p>Start typing to search commands, tips, and configurations</p></div>';
+}
+
+// Close search overlay
+function closeSearch() {
+const overlay = document.getElementById('searchOverlay');
+overlay.classList.remove('active');
+selectedResultIndex = -1;
+}
+
+// Close when clicking overlay background
+function closeSearchOnOverlay(event) {
+if (event.target.id === 'searchOverlay') {
+closeSearch();
+}
+}
+
+// Handle search input
+function handleSearch(query) {
+const resultsContainer = document.getElementById('searchResults');
+selectedResultIndex = -1;
+
+if (!query.trim()) {
+resultsContainer.innerHTML = '<div class="no-results"><i class="material-icons">search</i><p>Start typing to search commands, tips, and configurations</p></div>';
+searchResults = [];
+return;
+}
+
+// Search through data
+const queryLower = query.toLowerCase();
+searchResults = searchData.filter(item => {
+const commandMatch = item.command.toLowerCase().includes(queryLower);
+const descMatch = item.desc.toLowerCase().includes(queryLower);
+const keywordsMatch = item.keywords.some(kw => kw.includes(queryLower));
+const categoryMatch = item.category.toLowerCase().includes(queryLower);
+
+return commandMatch || descMatch || keywordsMatch || categoryMatch;
+});
+
+// Sort results by relevance
+searchResults.sort((a, b) => {
+const aCommand = a.command.toLowerCase().includes(queryLower) ? 0 : 1;
+const bCommand = b.command.toLowerCase().includes(queryLower) ? 0 : 1;
+return aCommand - bCommand;
+});
+
+// Limit results
+searchResults = searchResults.slice(0, 15);
+
+if (searchResults.length === 0) {
+resultsContainer.innerHTML = '<div class="no-results"><i class="material-icons">search_off</i><p>No results found for "' + escapeHtml(query) + '"</p></div>';
+return;
+}
+
+// Render results
+let html = '';
+searchResults.forEach((item, index) => {
+html += `
+<div class="search-result-item" data-index="${index}" onclick="selectResult(${index})">
+<div class="result-category">${escapeHtml(item.category)}</div>
+<div class="result-command">${highlightText(escapeHtml(item.command), query)}</div>
+<div class="result-desc">${highlightText(escapeHtml(item.desc), query)}</div>
+</div>
+`;
+});
+resultsContainer.innerHTML = html;
+}
+
+// Select a result
+function selectResult(index) {
+const item = searchResults[index];
+if (item) {
+// Scroll to the section in the page
+scrollToSection(item.category);
+closeSearch();
+}
+}
+
+// Scroll to section
+function scrollToSection(category) {
+const headers = document.querySelectorAll('.section-header');
+let targetHeader = null;
+
+// Map category to section header
+const categoryMap = {
+'Session': 'Session Management',
+'Window': 'Window Management',
+'Pane': 'Pane Management',
+'Flag': 'Important Flags',
+'Copy Mode': 'Copy Mode',
+'Config': 'Configuration File',
+'Layouts': 'Developer Hacks',
+'Hack': 'Developer Hacks',
+'Plugin': 'Developer Hacks'
+};
+
+const targetText = categoryMap[category] || category;
+
+headers.forEach(header => {
+if (header.textContent.toLowerCase().includes(targetText.toLowerCase())) {
+targetHeader = header;
+}
+});
+
+if (targetHeader) {
+targetHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+targetHeader.style.background = 'linear-gradient(90deg, rgba(0, 255, 247, 0.2), transparent)';
+setTimeout(() => {
+targetHeader.style.background = 'linear-gradient(90deg, rgba(255, 0, 110, 0.1), transparent)';
+}, 2000);
+}
+}
+
+// Highlight search text
+function highlightText(text, query) {
+if (!query) return text;
+const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+return text.replace(regex, '<span class="result-highlight">$1</span>');
+}
+
+// Escape HTML
+function escapeHtml(text) {
+const div = document.createElement('div');
+div.textContent = text;
+return div.innerHTML;
+}
+
+// Escape regex
+function escapeRegExp(string) {
+return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Update selected result
+function updateSelectedResult() {
+const items = document.querySelectorAll('.search-result-item');
+items.forEach((item, index) => {
+if (index === selectedResultIndex) {
+item.classList.add('selected');
+item.scrollIntoView({ block: 'nearest' });
+} else {
+item.classList.remove('selected');
+}
+});
+}
+
+// Keyboard event listeners
+document.addEventListener('keydown', function(e) {
+// Check for Ctrl+K or Cmd+K (Meta key on Mac)
+if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+e.preventDefault();
+openSearch();
+}
+
+// Handle search overlay navigation
+const overlay = document.getElementById('searchOverlay');
+if (overlay.classList.contains('active')) {
+if (e.key === 'Escape') {
+closeSearch();
+} else if (e.key === 'ArrowDown') {
+e.preventDefault();
+if (selectedResultIndex < searchResults.length - 1) {
+selectedResultIndex++;
+updateSelectedResult();
+}
+} else if (e.key === 'ArrowUp') {
+e.preventDefault();
+if (selectedResultIndex > 0) {
+selectedResultIndex--;
+updateSelectedResult();
+}
+} else if (e.key === 'Enter' && selectedResultIndex >= 0) {
+e.preventDefault();
+selectResult(selectedResultIndex);
+}
+}
+});
+</script>
+</body>
+</html>
