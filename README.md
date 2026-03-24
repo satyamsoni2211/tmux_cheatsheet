@@ -62,6 +62,10 @@ python3 -m http.server 8000
 
 Then visit `http://localhost:8000`
 
+## Deployed Site
+
+**Live at**: https://tmux-cheatsheet.satyamsoni.com
+
 ## Deployment
 
 ### Manual Deploy (Vercel CLI)
