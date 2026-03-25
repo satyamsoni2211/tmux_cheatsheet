@@ -888,15 +888,12 @@ Find the `</style>` closing tag and add before it:
 ```css
 /* Command item highlight on search scroll-to */
 .command-item.section-highlight {
-  animation: cmd-highlight 2s ease forwards;
+  animation: section-highlight-pulse 2s ease forwards;
   border-color: #00fff7 !important;
 }
-
-@keyframes cmd-highlight {
-  0% { background: rgba(255, 255, 0, 0.4); }
-  100% { background: rgba(131, 56, 236, 0.1); }
-}
 ```
+
+Note: `@keyframes section-highlight-pulse` is already defined in Task 1 — do NOT duplicate the keyframe definition.
 
 ---
 
