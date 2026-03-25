@@ -2014,9 +2014,62 @@ resultsContainer.innerHTML = html;
 function selectResult(index) {
 const item = searchResults[index];
 if (item) {
-// Scroll to the section in the page
-scrollToSection(item.category);
-closeSearch();
+  // Map category to section name
+  const categoryToSection = {
+    'Session': 'session',
+    'Server': 'server',
+    'Window': 'window',
+    'Pane': 'pane',
+    'Flag': 'flags',
+    'Copy Mode': 'copy',
+    'Config': 'config',
+    'Layouts': 'hacks',
+    'Hack': 'hacks',
+    'Plugin': 'hacks',
+    'Monitoring': 'monitoring',
+    'Script': 'scripting',
+    'Bindings': 'bindings',
+    'Theme': 'theming'
+  };
+
+  const sectionName = categoryToSection[item.category] || item.category.toLowerCase();
+  const section = document.querySelector(`[data-section="${sectionName}"]`);
+
+  // Expand section if collapsed
+  if (section && !section.classList.contains('expanded')) {
+    section.classList.add('expanded');
+    const state = getStoredState();
+    state[sectionName] = true;
+    saveState(state);
+  }
+
+  // Scroll section into view
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Apply highlight to the section header
+    const toggle = section.querySelector('.section-toggle');
+    if (toggle) {
+      toggle.style.background = 'rgba(255, 255, 0, 0.2)';
+      setTimeout(() => {
+        toggle.style.background = '';
+      }, 2000);
+    }
+  }
+
+  // Find and highlight specific command within section
+  if (section) {
+    const items = section.querySelectorAll('.command-item');
+    items.forEach(cmdItem => {
+      const keyEl = cmdItem.querySelector('.cmd-key');
+      if (keyEl && keyEl.textContent.trim() === item.command.trim()) {
+        cmdItem.classList.add('section-highlight');
+        setTimeout(() => cmdItem.classList.remove('section-highlight'), 2000);
+        cmdItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }
+
+  closeSearch();
 }
 }
 
