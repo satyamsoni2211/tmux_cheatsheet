@@ -62,7 +62,7 @@ Enhance the existing tmux cheatsheet (`index.html`) with collapsible sections, e
 - `Ctrl+b M` — Mute/unmute visual activity alerts
 - `set -g lock-after-time [seconds]` — Auto-lock after idle
 - `set -g lock-command [command]` — Custom lock command (e.g., `vlock`)
-- Hooks: `after-split`, `after-kill-pane`, ` pane-activity`, ` pane-bell`
+- Hooks: `after-split`, `after-kill-pane`, `pane-activity`, `pane-bell`
 
 ### Section 10: Scripting & Automation
 **Commands:**
