@@ -1849,6 +1849,87 @@ const searchData = [
 { category: 'Plugin', command: 'TPM', desc: 'Tmux Plugin Manager for managing plugins', keywords: ['tpm', 'plugin', 'manager', 'install', 'manage'] },
 ];
 
+// ===== COLLAPSIBLE SECTIONS STATE =====
+const COLLAPSIBLE_KEY = 'tmux-section-state';
+
+function getStoredState() {
+  try {
+    return JSON.parse(localStorage.getItem(COLLAPSIBLE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem(COLLAPSIBLE_KEY, JSON.stringify(state));
+}
+
+function expandSection(sectionName) {
+  const section = document.querySelector(`[data-section="${sectionName}"]`);
+  if (section && !section.classList.contains('expanded')) {
+    section.classList.add('expanded');
+    const state = getStoredState();
+    state[sectionName] = true;
+    saveState(state);
+  }
+}
+
+function toggleSection(sectionEl) {
+  const sectionName = sectionEl.dataset.section;
+  const isExpanded = sectionEl.classList.toggle('expanded');
+  const state = getStoredState();
+  state[sectionName] = isExpanded;
+  saveState(state);
+}
+
+function initCollapsibles() {
+  const state = getStoredState();
+  // Default: all collapsed except 'theming' (it's the showcase section)
+  document.querySelectorAll('.collapsible-section').forEach(section => {
+    const name = section.dataset.section;
+    if (state[name] === true || name === 'theming') {
+      section.classList.add('expanded');
+    }
+  });
+
+  // Attach toggle listeners
+  document.querySelectorAll('.section-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      toggleSection(btn.closest('.collapsible-section'));
+    });
+    btn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleSection(btn.closest('.collapsible-section'));
+      }
+    });
+  });
+}
+
+// Copy theme config to clipboard
+function copyThemeConfig(themeName) {
+  const card = document.querySelector(`.theme-card.${themeName}`);
+  if (!card) return;
+  const configEl = card.querySelector('.theme-config');
+  if (!configEl) return;
+
+  // Expand card if collapsed to show config
+  card.classList.add('expanded');
+  const btn = card.querySelector('.copy-config-btn');
+
+  navigator.clipboard.writeText(configEl.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Hide Config';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    btn.textContent = 'Copy Failed';
+    setTimeout(() => {
+      btn.textContent = 'Hide Config';
+    }, 2000);
+  });
+}
+
 let selectedResultIndex = -1;
 let searchResults = [];
 
@@ -2037,6 +2118,9 @@ selectResult(selectedResultIndex);
 }
 }
 });
+
+// Initialize collapsibles on load
+document.addEventListener('DOMContentLoaded', initCollapsibles);
 </script>
 </body>
 </html>
