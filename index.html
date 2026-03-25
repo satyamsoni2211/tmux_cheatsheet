@@ -660,6 +660,166 @@ margin: 0 10px;
 width: calc(100% - 20px);
 }
 }
+
+/* ===== COLLAPSIBLE SECTIONS ===== */
+.collapsible-section {
+  margin-bottom: 15px;
+  border: 2px solid #3d3d5c;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(26, 26, 46, 0.9);
+}
+
+.section-toggle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 16px 20px;
+  color: #ff006e;
+  font-family: 'Caveat', cursive;
+  font-size: 28px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  text-align: left;
+  transition: background 0.2s ease;
+  position: relative;
+}
+
+.section-toggle::before {
+  content: '✦';
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.section-toggle:hover {
+  background: rgba(255, 0, 110, 0.08);
+}
+
+.toggle-icon {
+  margin-left: auto;
+  font-size: 18px;
+  color: #00fff7;
+  transition: transform 0.3s ease;
+}
+
+.collapsible-section.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.section-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.collapsible-section.expanded .section-content {
+  max-height: 10000px;
+}
+
+/* Section highlight on search jump */
+.section-highlight {
+  animation: section-highlight-pulse 2s ease forwards;
+}
+
+@keyframes section-highlight-pulse {
+  0% { background: rgba(255, 255, 0, 0.3); }
+  100% { background: transparent; }
+}
+
+/* ===== THEME CARDS ===== */
+.theme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.theme-card {
+  background: rgba(26, 26, 46, 0.95);
+  border: 2px solid #3d3d5c;
+  border-radius: 8px;
+  padding: 18px;
+  position: relative;
+}
+
+.theme-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 8px 8px 0 0;
+}
+
+.theme-card.dracula::before { background: linear-gradient(90deg, #282a36, #ff79c6, #50fa7b); }
+.theme-card.monokai::before  { background: linear-gradient(90deg, #272822, #f8f8f2, #a6e22e); }
+.theme-card.gruvbox::before  { background: linear-gradient(90deg, #282828, #fb4934, #b8bb26); }
+.theme-card.nord::before     { background: linear-gradient(90deg, #2e3440, #88c0d0, #a3be8c); }
+.theme-card.solarized::before{ background: linear-gradient(90deg, #002b36, #93a1a1, #859900); }
+
+.theme-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #00fff7;
+  margin-bottom: 12px;
+  font-family: 'Fira Code', monospace;
+}
+
+.theme-swatches {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.15);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.copy-config-btn {
+  background: rgba(0, 255, 247, 0.1);
+  border: 1px solid #00fff7;
+  border-radius: 4px;
+  color: #00fff7;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 10px;
+}
+
+.copy-config-btn:hover {
+  background: rgba(0, 255, 247, 0.2);
+}
+
+.copy-config-btn.copied {
+  background: rgba(0, 255, 135, 0.2);
+  border-color: #00ff87;
+  color: #00ff87;
+}
+
+.theme-config {
+  display: none;
+}
+
+.theme-card.expanded .theme-config {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .theme-grid { grid-template-columns: 1fr; }
+  .section-toggle { font-size: 22px; padding: 12px 16px; }
+}
 </style>
 </head>
 <body>
