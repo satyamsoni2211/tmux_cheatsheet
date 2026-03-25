@@ -1847,6 +1847,55 @@ const searchData = [
 { category: 'Hack', command: 'Status Bar Customization', desc: 'Customize status bar colors, position, and content', keywords: ['status', 'bar', 'customize', 'colors', 'position'] },
 { category: 'Plugin', command: 'tmux-resurrect', desc: 'Save and restore tmux sessions across restarts', keywords: ['resurrect', 'save', 'restore', 'session', 'persistence', 'plugin'] },
 { category: 'Plugin', command: 'TPM', desc: 'Tmux Plugin Manager for managing plugins', keywords: ['tpm', 'plugin', 'manager', 'install', 'manage'] },
+
+// Server & Client Management
+{ category: 'Server', command: 'tmux kill-server', desc: 'Shut down all sessions and server', keywords: ['kill', 'server', 'shutdown', 'stop', 'all'] },
+{ category: 'Server', command: 'tmux list-clients -t [session]', desc: 'Show clients attached to session', keywords: ['list', 'clients', 'attached', 'session'] },
+{ category: 'Server', command: 'tmux detach-client -t [client]', desc: 'Force detach a client', keywords: ['detach', 'client', 'force', 'disconnect'] },
+{ category: 'Server', command: 'tmux attach -d -t [session]', desc: 'Detach other clients when attaching', keywords: ['attach', 'detach', 'client', 'session'] },
+{ category: 'Server', command: 'tmux lock-server', desc: 'Lock all sessions on server', keywords: ['lock', 'server', 'all', 'session'] },
+{ category: 'Server', command: 'tmux lock-session -t [session]', desc: 'Lock a specific session', keywords: ['lock', 'session', 'specific'] },
+{ category: 'Server', command: 'tmux lock-client -t [client]', desc: 'Lock a specific client', keywords: ['lock', 'client', 'specific'] },
+
+// Activity Monitoring
+{ category: 'Monitoring', command: 'set -g monitor-activity on', desc: 'Monitor pane for activity', keywords: ['monitor', 'activity', 'pane', 'watch'] },
+{ category: 'Monitoring', command: 'set -g activity-action any-bell', desc: 'Bell on activity in background pane', keywords: ['activity', 'action', 'bell', 'alert', 'monitor'] },
+{ category: 'Monitoring', command: 'Ctrl+b M', desc: 'Mute/unmute visual activity alerts', keywords: ['mute', 'unmute', 'activity', 'alert', 'monitor'] },
+{ category: 'Monitoring', command: 'set -g lock-after-time [seconds]', desc: 'Auto-lock after idle time', keywords: ['lock', 'auto', 'idle', 'timeout', 'after'] },
+{ category: 'Monitoring', command: 'set -g lock-command vlock', desc: 'Custom lock command', keywords: ['lock', 'command', 'vlock', 'custom'] },
+{ category: 'Monitoring', command: 'set-hook pane-activity', desc: 'Hook fired on pane activity', keywords: ['hook', 'activity', 'pane', 'event', 'monitor'] },
+{ category: 'Monitoring', command: 'set-hook pane-bell', desc: 'Hook fired on pane bell', keywords: ['hook', 'bell', 'pane', 'event'] },
+
+// Scripting & Automation
+{ category: 'Script', command: 'tmux send-keys -t [pane] "cmd" Enter', desc: 'Send keystrokes to pane', keywords: ['send', 'keys', 'keystrokes', 'automation', 'script'] },
+{ category: 'Script', command: 'tmux run-shell "command"', desc: 'Run shell command in tmux context', keywords: ['run', 'shell', 'command', 'automation', 'script'] },
+{ category: 'Script', command: 'tmux send-prefix -t [pane]', desc: 'Send prefix to another pane', keywords: ['send', 'prefix', 'pane', 'automation'] },
+{ category: 'Script', command: 'tmux wait-for -L [channel]', desc: 'Wait for a lock channel', keywords: ['wait', 'lock', 'channel', 'synchronize'] },
+{ category: 'Script', command: 'tmux wait-for -U [channel]', desc: 'Unblock a wait channel', keywords: ['wait', 'unblock', 'channel', 'synchronize'] },
+{ category: 'Script', command: 'tmux confirm-before -p "msg" "cmd"', desc: 'Confirm before running command', keywords: ['confirm', 'before', 'prompt', 'security'] },
+{ category: 'Script', command: 'tmux display-message -p', desc: 'Display styled message with format', keywords: ['display', 'message', 'format', 'styled'] },
+{ category: 'Script', command: 'tmux display-popup -t [title]', desc: 'Display interactive popup', keywords: ['popup', 'display', 'interactive', 'menu'] },
+{ category: 'Script', command: 'tmux choose-tree', desc: 'Interactive window/session browser', keywords: ['choose', 'tree', 'interactive', 'browser', 'session'] },
+{ category: 'Script', command: 'tmux list-commands', desc: 'Show all available tmux commands', keywords: ['list', 'commands', 'available', 'all'] },
+
+// Advanced Key Bindings
+{ category: 'Bindings', command: 'bind -r', desc: 'Repeatable binding (no prefix needed)', keywords: ['bind', 'repeat', 'repeatable', 'binding'] },
+{ category: 'Bindings', command: 'bind -T [table]', desc: 'Bind to specific key table', keywords: ['bind', 'table', 'key', 'table', 'copy-mode-vi'] },
+{ category: 'Bindings', command: 'bind -n', desc: 'Direct key binding (no prefix)', keywords: ['bind', 'direct', 'no-prefix', 'binding', 'without'] },
+{ category: 'Bindings', command: 'unbind -a', desc: 'Remove all bindings', keywords: ['unbind', 'remove', 'all', 'bindings'] },
+{ category: 'Bindings', command: 'unbind -T [table] [key]', desc: 'Remove binding from specific table', keywords: ['unbind', 'table', 'remove', 'binding'] },
+{ category: 'Bindings', command: 'Ctrl+b : list-keys', desc: 'Show all bound keys in current mode', keywords: ['list', 'keys', 'bound', 'show', 'all'] },
+{ category: 'Bindings', command: 'key tables copy-mode-vi', desc: 'Key table for vi-style copy mode', keywords: ['key', 'table', 'copy', 'mode', 'vi', 'copy-mode-vi'] },
+{ category: 'Bindings', command: 'key tables root', desc: 'Root key table (no prefix ever)', keywords: ['key', 'table', 'root', 'no-prefix', 'direct'] },
+
+// Theming
+{ category: 'Theme', command: 'Dracula theme', desc: 'Purple and pink theme for tmux', keywords: ['theme', 'dracula', 'purple', 'color', 'plugin'] },
+{ category: 'Theme', command: 'Monokai theme', desc: 'Classic Monokai color theme', keywords: ['theme', 'monokai', 'color', 'dark'] },
+{ category: 'Theme', command: 'Gruvbox theme', desc: 'Warm retro color theme', keywords: ['theme', 'gruvbox', 'retro', 'warm', 'color'] },
+{ category: 'Theme', command: 'Nord theme', desc: 'Arctic blue Nord color theme', keywords: ['theme', 'nord', 'blue', 'arctic', 'cold', 'color'] },
+{ category: 'Theme', command: 'Solarized Dark theme', desc: 'Low-contrast Solarized dark theme', keywords: ['theme', 'solarized', 'dark', 'low', 'contrast'] },
+{ category: 'Theme', command: 'tmux status-style', desc: 'Customize status bar style', keywords: ['status', 'bar', 'style', 'custom', 'theme'] },
+{ category: 'Theme', command: 'tmux window-status-format', desc: 'Customize window status format', keywords: ['window', 'status', 'format', 'custom', 'theme'] },
 ];
 
 // ===== COLLAPSIBLE SECTIONS STATE =====
