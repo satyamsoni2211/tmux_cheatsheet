@@ -878,7 +878,12 @@ width: calc(100% - 20px);
 </div>
 
 <!-- Section 1: Session Management -->
-<div class="section-header">Session Management</div>
+<div class="collapsible-section" data-section="session">
+<button class="section-toggle">
+Session Management
+<span class="toggle-icon">▼</span>
+</button>
+<div class="section-content">
 <div class="card">
 <div class="command-grid">
 <div class="command-item">
@@ -924,9 +929,16 @@ width: calc(100% - 20px);
 <span class="flag-desc">Detach other clients from session</span>
 </div>
 </div>
+</div>
+</div>
 
 <!-- Section 2: Window Management -->
-<div class="section-header">Window Management</div>
+<div class="collapsible-section" data-section="window">
+<button class="section-toggle">
+Window Management
+<span class="toggle-icon">▼</span>
+</button>
+<div class="section-content">
 <div class="card">
 <div class="command-grid">
 <div class="command-item">
@@ -968,9 +980,16 @@ width: calc(100% - 20px);
 <div class="config-code">:move-window -t [target_session]:[position]</div>
 </div>
 </div>
+</div>
+</div>
 
 <!-- Section 3: Pane Management -->
-<div class="section-header">Pane Management</div>
+<div class="collapsible-section" data-section="pane">
+<button class="section-toggle">
+Pane Management
+<span class="toggle-icon">▼</span>
+</button>
+<div class="section-content">
 <div class="card">
 <div class="command-grid">
 <div class="command-item">
@@ -1030,9 +1049,16 @@ width: calc(100% - 20px);
 </div>
 </div>
 </div>
+</div>
+</div>
 
-<!-- Section 4: Important Flags -->
-<div class="section-header">Important Flags & Options</div>
+<!-- Section 4: Important Flags & Options -->
+<div class="collapsible-section" data-section="flags">
+<button class="section-toggle">
+Important Flags & Options
+<span class="toggle-icon">▼</span>
+</button>
+<div class="section-content">
 <div class="card">
 <div class="flag-item">
 <span class="flag-key">-h / -v</span>
@@ -1068,9 +1094,16 @@ width: calc(100% - 20px);
 <div class="config-code">:join-pane -s 2 -t 1  # Join window 2 to window 1</div>
 </div>
 </div>
+</div>
+</div>
 
-<!-- Section 5: Copy Mode -->
-<div class="section-header">Copy Mode (Vi-Style)</div>
+<!-- Section 5: Copy Mode (Vi-Style) -->
+<div class="collapsible-section" data-section="copy">
+<button class="section-toggle">
+Copy Mode (Vi-Style)
+<span class="toggle-icon">▼</span>
+</button>
+<div class="section-content">
 <div class="card">
 <div style="text-align: center; margin-bottom: 15px;">
 <span class="cmd-key">Ctrl+b [</span> → Enter Copy Mode &nbsp;&nbsp;|&nbsp;&nbsp; <span class="cmd-key">q</span> → Quit
@@ -1124,10 +1157,16 @@ width: calc(100% - 20px);
 <div class="config-code">setw -g mode-keys vi</div>
 </div>
 </div>
+</div>
+</div>
 
-<!-- Section 6: Configuration Tips -->
-<div class="section-header">Configuration File Tips (~/.tmux.conf)</div>
-
+<!-- Section 6: Configuration File Tips -->
+<div class="collapsible-section" data-section="config">
+<button class="section-toggle">
+Configuration File Tips (~/.tmux.conf)
+<span class="toggle-icon">▼</span>
+</button>
+<div class="section-content">
 <div class="hack-card">
 <div class="hack-title">
 <i class="material-icons">keyboard</i>
@@ -1177,10 +1216,16 @@ Quick Config Reload
 </div>
 <div class="config-code">bind r source-file ~/.tmux.conf \; display "Config Reloaded!"</div>
 </div>
+</div>
+</div>
 
-<!-- Section 7: Developer Hacks -->
-<div class="section-header">Developer Hacks & Productivity</div>
-
+<!-- Section 7: Developer Hacks & Productivity -->
+<div class="collapsible-section" data-section="hacks">
+<button class="section-toggle">
+Developer Hacks & Productivity
+<span class="toggle-icon">▼</span>
+</button>
+<div class="section-content">
 <!-- Pane Layouts -->
 <div class="hack-card">
 <div class="hack-title">
@@ -1328,6 +1373,8 @@ Install <span style="color: #00fff7; font-weight: 700;">tmux-resurrect</span> pl
 
 # Install via TPM (Tmux Plugin Manager)
 set -g @plugin 'tmux-plugins/tmux-resurrect'</div>
+</div>
+</div>
 </div>
 
 <!-- Footer -->
