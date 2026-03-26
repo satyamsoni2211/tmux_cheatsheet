@@ -810,10 +810,24 @@ width: calc(100% - 20px);
 
 .theme-config {
   display: none;
+  margin-top: 12px;
 }
 
 .theme-card.expanded .theme-config {
   display: block;
+}
+
+.theme-card {
+  cursor: pointer;
+}
+
+.theme-card .copy-config-btn {
+  pointer-events: none;
+}
+
+.theme-card .copy-config-btn,
+.theme-card .theme-swatches {
+  pointer-events: auto;
 }
 
 @media (max-width: 720px) {
@@ -1583,7 +1597,7 @@ bind -T user M-1 select-window -t 1</div>
       </p>
       <div class="theme-grid">
         <!-- Dracula -->
-        <div class="theme-card dracula expanded">
+        <div class="theme-card dracula">
           <div class="theme-name">Dracula</div>
           <div class="theme-swatches">
             <span class="swatch" style="background:#282a36" title="#282a36"></span>
@@ -1593,25 +1607,24 @@ bind -T user M-1 select-window -t 1</div>
             <span class="swatch" style="background:#50fa7b" title="#50fa7b"></span>
             <span class="swatch" style="background:#f8f8f2" title="#f8f8f2"></span>
           </div>
-          <button class="copy-config-btn" onclick="copyThemeConfig('dracula')">Copy Config</button>
+          <button class="copy-config-btn" onclick="copyThemeConfig('dracula', event)">Copy</button>
           <pre class="config-code theme-config"># Dracula Theme for tmux
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'dracula/tmux'
 
-# Colors
-set -g @dracula-show-left-icon "#[fg=#282a36,bg=#ff79c6,bold] #S #[fg=#ff79c6,bg=#282a36,nobold]"
-set -g @dracula-cpu-percent true
-set -g @dracula-gpu-percent true
-set -g @dracula-ram-usage true
-set -g @dracula-date-time "%Y-%m-%d %H:%M"
-
-# Status bar
+# Status Bar
 set -g status-position bottom
-set -g status-style bg=#282a36,fg=#f8f8f2
-set -g status-left-length 100
-set -g status-right-length 100
-set -g status-left "#{@dracula-show-left-icon}"
-set -g status-right "#{@dracula-cpu}  #{@dracula-ram}  #{@dracula-gpu}  #{@dracula-date-time}"</pre>
+set -g status-style 'bg=#282a36,fg=#f8f8f2'
+set -g status-left '#[fg=#ff79c6,bold] #S #[fg=#6272a4]|'
+set -g status-right '#[fg=#6272a4]| #[fg=#50fa7b]%H:%M #[fg=#6272a4]| #[fg=#ff79c6]%d-%b'
+
+# Window Status
+setw -g window-status-format '#[fg=#6272a4] #I:#W '
+setw -g window-status-current-format '#[fg=#282a36,bg=#ff79c6,bold] #I:#W '
+
+# Active/Inactive Panes
+set -g window-style 'fg=#6272a4,bg=#282a36'
+set -g window-active-style 'fg=#f8f8f2,bg=#282a36'
+set -g pane-border-style "fg=#44475a,bg=default"
+set -g pane-active-border-style "fg=#ff79c6,bg=default"</pre>
         </div>
 
         <!-- Monokai -->
@@ -1625,26 +1638,24 @@ set -g status-right "#{@dracula-cpu}  #{@dracula-ram}  #{@dracula-gpu}  #{@dracu
             <span class="swatch" style="background:#66d9ef" title="#66d9ef"></span>
             <span class="swatch" style="background:#e92682" title="#e92682"></span>
           </div>
-          <button class="copy-config-btn" onclick="copyThemeConfig('monokai')">Copy Config</button>
+          <button class="copy-config-btn" onclick="copyThemeConfig('monokai', event)">Copy</button>
           <pre class="config-code theme-config"># Monokai Theme for tmux
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-colors'
 
-# Monokai palette
-set -g @monokai-bg "#272822"
-set -g @monokai-fg "#f8f8f2"
-set -g @monokai-yellow "#e6db74"
-set -g @monokai-green "#a6e22e"
-set -g @monokai-pink "#f92672"
-set -g @monokai-blue "#66d9ef"
-set -g @monokai-purple "#ae81ff"
+# Status Bar
+set -g status-position bottom
+set -g status-style 'bg=#272822,fg=#f8f8f2'
+set -g status-left '#[fg=#f92672,bold] #S #[fg=#49483e]|'
+set -g status-right '#[fg=#49483e]| #[fg=#a6e22e]%H:%M #[fg=#49483e]| #[fg=#e6db74]%d-%b'
 
-# Status bar
-set -g status-style bg=@monokai-bg,fg=@monokai-fg
-set -g status-left " #[fg=@monokai-pink]#S#[fg=@monokai-bg,nobold]│"
-set -g status-right "#[fg=@monokai-yellow]%Y-%m-%d #[fg=@monokai-green]%H:%M "
-set -g window-status-format "#[fg=@monokai-bg,bg=@monokai-yellow] #I "
-set -g window-status-current-format "#[fg=@monokai-bg,bg=@monokai-green,bold] #I "</pre>
+# Window Status
+setw -g window-status-format '#[fg=#49483e] #I:#W '
+setw -g window-status-current-format '#[fg=#272822,bg=#a6e22e,bold] #I:#W '
+
+# Active/Inactive Panes
+set -g window-style 'fg=#49483e,bg=#272822'
+set -g window-active-style 'fg=#f8f8f2,bg=#272822'
+set -g pane-border-style "fg=#49483e,bg=default"
+set -g pane-active-border-style "fg=#a6e22e,bg=default"</pre>
         </div>
 
         <!-- Gruvbox Dark -->
@@ -1658,25 +1669,24 @@ set -g window-status-current-format "#[fg=@monokai-bg,bg=@monokai-green,bold] #I
             <span class="swatch" style="background:#fabd2f" title="#fabd2f"></span>
             <span class="swatch" style="background:#ebdbb2" title="#ebdbb2"></span>
           </div>
-          <button class="copy-config-btn" onclick="copyThemeConfig('gruvbox')">Copy Config</button>
-          <pre class="config-code theme-config"># Gruvbox Dark Theme for tmux
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-colors'
+          <button class="copy-config-btn" onclick="copyThemeConfig('gruvbox', event)">Copy</button>
+          <pre class="config-code theme-config"># Gruvbox Theme for tmux
 
-# Gruvbox palette
-set -g @gruvbox-bg "#282828"
-set -g @gruvbox-fg "#ebdbb2"
-set -g @gruvbox-red "#fb4934"
-set -g @gruvbox-green "#b8bb26"
-set -g @gruvbox-yellow "#fabd2f"
-set -g @gruvbox-blue "#83a598"
+# Status Bar
+set -g status-position bottom
+set -g status-style 'bg=#282828,fg=#ebdbb2'
+set -g status-left '#[fg=#fb4934,bold] #S #[fg=#3c3836]|'
+set -g status-right '#[fg=#3c3836]| #[fg=#b8bb26]%H:%M #[fg=#3c3836]| #[fg=#fabd2f]%d-%b'
 
-# Status bar
-set -g status-style bg=@gruvbox-bg,fg=@gruvbox-fg
-set -g status-left " #[fg=@gruvbox-red,bold]#S#[fg=@gruvbox-bg,nobold]│"
-set -g status-right "#[fg=@gruvbox-yellow]%Y-%m-%d #[fg=@gruvbox-green]%H:%M "
-set -g window-status-format "#[fg=@gruvbox-bg,bg=@gruvbox-yellow] #I "
-set -g window-status-current-format "#[fg=@gruvbox-bg,bg=@gruvbox-green,bold] #I "</pre>
+# Window Status
+setw -g window-status-format '#[fg=#3c3836] #I:#W '
+setw -g window-status-current-format '#[fg=#282828,bg=#b8bb26,bold] #I:#W '
+
+# Active/Inactive Panes
+set -g window-style 'fg=#3c3836,bg=#282828'
+set -g window-active-style 'fg=#ebdbb2,bg=#282828'
+set -g pane-border-style "fg=#3c3836,bg=default"
+set -g pane-active-border-style "fg=#b8bb26,bg=default"</pre>
         </div>
 
         <!-- Nord -->
@@ -1690,25 +1700,24 @@ set -g window-status-current-format "#[fg=@gruvbox-bg,bg=@gruvbox-green,bold] #I
             <span class="swatch" style="background:#bf616a" title="#bf616a"></span>
             <span class="swatch" style="background:#eceff4" title="#eceff4"></span>
           </div>
-          <button class="copy-config-btn" onclick="copyThemeConfig('nord')">Copy Config</button>
+          <button class="copy-config-btn" onclick="copyThemeConfig('nord', event)">Copy</button>
           <pre class="config-code theme-config"># Nord Theme for tmux
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-colors'
 
-# Nord palette
-set -g @nord0 "#2e3440"
-set -g @nord1 "#3b4252"
-set -g @nord4 "#81a1c1"
-set -g @nord2 "#a3be8c"
-set -g @nord3 "#ebcb8b"
-set -g @nord11 "#bf616a"
+# Status Bar
+set -g status-position bottom
+set -g status-style 'bg=#2e3440,fg=#eceff4'
+set -g status-left '#[fg=#88c0d0,bold] #S #[fg=#3b4252]|'
+set -g status-right '#[fg=#3b4252]| #[fg=#a3be8c]%H:%M #[fg=#3b4252]| #[fg=#ebcb8b]%d-%b'
 
-# Status bar
-set -g status-style bg=@nord0,fg=@nord4
-set -g status-left " #[fg=@nord11,bold]#S#[fg=@nord0,nobold]│"
-set -g status-right "#[fg=@nord3]%Y-%m-%d #[fg=@nord2]%H:%M "
-set -g window-status-format "#[fg=@nord1,bg=@nord3] #I "
-set -g window-status-current-format "#[fg=@nord0,bg=@nord4,bold] #I "</pre>
+# Window Status
+setw -g window-status-format '#[fg=#3b4252] #I:#W '
+setw -g window-status-current-format '#[fg=#2e3440,bg=#88c0d0,bold] #I:#W '
+
+# Active/Inactive Panes
+set -g window-style 'fg=#3b4252,bg=#2e3440'
+set -g window-active-style 'fg=#eceff4,bg=#2e3440'
+set -g pane-border-style "fg=#3b4252,bg=default"
+set -g pane-active-border-style "fg=#88c0d0,bg=default"</pre>
         </div>
 
         <!-- Solarized Dark -->
@@ -1722,29 +1731,24 @@ set -g window-status-current-format "#[fg=@nord0,bg=@nord4,bold] #I "</pre>
             <span class="swatch" style="background:#b58900" title="#b58900"></span>
             <span class="swatch" style="background:#fdf6e3" title="#fdf6e3"></span>
           </div>
-          <button class="copy-config-btn" onclick="copyThemeConfig('solarized')">Copy Config</button>
+          <button class="copy-config-btn" onclick="copyThemeConfig('solarized', event)">Copy</button>
           <pre class="config-code theme-config"># Solarized Dark Theme for tmux
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-colors'
 
-# Solarized palette
-set -g @solarized-bg "#002b36"
-set -g @solarized-fg "#93a1a1"
-set -g @solarized-base03 "#002b36"
-set -g @solarized-base02 "#073642"
-set -g @solarized-base01 "#93a1a1"
-set -g @solarized-yellow "#b58900"
-set -g @solarized-orange "#cb4b16"
-set -g @solarized-red "#dc322f"
-set -g @solarized-cyan "#2aa198"
-set -g @solarized-green "#859900"
+# Status Bar
+set -g status-position bottom
+set -g status-style 'bg=#002b36,fg=#93a1a1'
+set -g status-left '#[fg=#2aa198,bold] #S #[fg=#073642]|'
+set -g status-right '#[fg=#073642]| #[fg=#859900]%H:%M #[fg=#073642]| #[fg=#b58900]%d-%b'
 
-# Status bar
-set -g status-style bg=@solarized-bg,fg=@solarized-fg
-set -g status-left " #[fg=@solarized-orange,bold]#S#[fg=@solarized-bg,nobold]│"
-set -g status-right "#[fg=@solarized-yellow]%Y-%m-%d #[fg=@solarized-green]%H:%M "
-set -g window-status-format "#[fg=@solarized-base02,bg=@solarized-yellow] #I "
-set -g window-status-current-format "#[fg=@solarized-bg,bg=@solarized-cyan,bold] #I "</pre>
+# Window Status
+setw -g window-status-format '#[fg=#073642] #I:#W '
+setw -g window-status-current-format '#[fg=#002b36,bg=#2aa198,bold] #I:#W '
+
+# Active/Inactive Panes
+set -g window-style 'fg=#073642,bg=#002b36'
+set -g window-active-style 'fg=#93a1a1,bg=#002b36'
+set -g pane-border-style "fg=#073642,bg=default"
+set -g pane-active-border-style "fg=#2aa198,bg=default"</pre>
         </div>
       </div>
     </div>
@@ -1960,13 +1964,14 @@ function initCollapsibles() {
 }
 
 // Copy theme config to clipboard
-function copyThemeConfig(themeName) {
+function copyThemeConfig(themeName, event) {
+  event.stopPropagation();
   const card = document.querySelector(`.theme-card.${themeName}`);
   if (!card) return;
   const configEl = card.querySelector('.theme-config');
   if (!configEl) return;
 
-  // Expand card if collapsed to show config
+  // Ensure card is expanded when copying
   card.classList.add('expanded');
   const btn = card.querySelector('.copy-config-btn');
 
@@ -1974,14 +1979,32 @@ function copyThemeConfig(themeName) {
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
     setTimeout(() => {
-      btn.textContent = 'Hide Config';
+      btn.textContent = 'Copy';
       btn.classList.remove('copied');
     }, 2000);
   }).catch(() => {
     btn.textContent = 'Copy Failed';
     setTimeout(() => {
-      btn.textContent = 'Hide Config';
+      btn.textContent = 'Copy';
     }, 2000);
+  });
+}
+
+// Toggle theme card accordion
+function toggleThemeCard(themeName, event) {
+  if (event.target.closest('.copy-config-btn')) return;
+  const card = document.querySelector(`.theme-card.${themeName}`);
+  if (!card) return;
+  card.classList.toggle('expanded');
+}
+
+// Initialize theme card accordion handlers
+function initThemeAccordions() {
+  document.querySelectorAll('.theme-card').forEach(card => {
+    const themeName = card.className.split(' ').find(c => c !== 'theme-card');
+    if (themeName) {
+      card.addEventListener('click', (e) => toggleThemeCard(themeName, e));
+    }
   });
 }
 
@@ -2228,7 +2251,10 @@ selectResult(selectedResultIndex);
 });
 
 // Initialize collapsibles on load
-document.addEventListener('DOMContentLoaded', initCollapsibles);
+document.addEventListener('DOMContentLoaded', () => {
+  initCollapsibles();
+  initThemeAccordions();
+});
 </script>
 </body>
 </html>
